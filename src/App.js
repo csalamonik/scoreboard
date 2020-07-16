@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, css, ClassNames } from '@emotion/core';
 import styled from '@emotion/styled';
-import React, { useState, useReducer } from 'react';
+import React, { useReducer, useContext, createContext } from 'react';
 import { COLOR_PALETTE } from './AppStyle';
 
 const Section = styled.section`
@@ -48,16 +48,22 @@ const Button = styled.button`
   
 `
 
+const ACTION_TYPES = {
+  INCREMENT_HOST: 'INCREMENT_HOST',
+  DECREMENT_HOST: 'DECREMEN_HOST',
+  INCREMENT_GUEST: 'INCREMENT_GUEST',
+  DECREMENT_GUEST: 'DECREMEN_GUEST'
+}
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "INCREMENT_HOST":
+    case ACTION_TYPES.INCREMENT_HOST:
       return { ...state, resultHost: state.resultHost + 1 };
-    case "DECREMENT_HOST":
+    case ACTION_TYPES.DECREMENT_HOST:
       return { ...state, resultHost: state.resultHost - 1 };
-    case "INCREMENT_GUEST":
+    case ACTION_TYPES.INCREMENT_GUEST:
       return { ...state, resultGuest: state.resultGuest + 1 };
-    case "DECREMENT_GUEST":
+    case ACTION_TYPES.DECREMENT_GUEST:
       return { ...state, resultGuest: state.resultGuest - 1 };
     default:
       return state;
@@ -70,10 +76,10 @@ const initialResult = {
 };
 
 
+const ReduxContext = createContext();
+
 const Board = () => {
-  // const [resultHost, setResultHost] = useState(0);
-  // const [resultGuest, setResultGuest] = useState(0);
-  const [state, dispatch] = useReducer(reducer, initialResult);
+  const { state, dispatch } = useContext(ReduxContext);
 
   return (
     <section
@@ -89,17 +95,16 @@ const Board = () => {
     >
       <div css={results}>
         <div css={buttons}>
-          {/* <Button onClick={() => setResultHost(resultHost + 1)}>+</Button> */}
-          <Button onClick={() => dispatch({ type: "INCREMENT_HOST" })}>+</Button>
-          <Button onClick={() => dispatch({ type: "DECREMENT_HOST" })}>-</Button>
+          <Button onClick={() => dispatch({ type: ACTION_TYPES.INCREMENT_HOST })}>+</Button>
+          <Button onClick={() => dispatch({ type: ACTION_TYPES.DECREMENT_HOST })}>-</Button>
         </div>
         <Number>{state.resultHost}</Number>
       </div>
       <div css={results}>
         <Number>{state.resultGuest}</Number>
         <div css={buttons}>
-          <Button onClick={() => dispatch({ type: "INCREMENT_GUEST" })}>+</Button>
-          <Button onClick={() => dispatch({ type: "DECREMENT_GUEST" })}>-</Button>
+          <Button onClick={() => dispatch({ type: ACTION_TYPES.INCREMENT_GUEST })}>+</Button>
+          <Button onClick={() => dispatch({ type: ACTION_TYPES.DECREMENT_GUEST })}>-</Button>
         </div>
       </div>
     </section>
@@ -107,9 +112,13 @@ const Board = () => {
 }
 
 const App = () => {
+  const [state, dispatch] = useReducer(reducer, initialResult);
+
   return (
     <Section>
-      <Board />
+      <ReduxContext.Provider value={{ state, dispatch }}>
+        <Board />
+      </ReduxContext.Provider>
     </Section>
   );
 }
