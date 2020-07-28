@@ -7,6 +7,7 @@ import { COLOR_PALETTE } from './AppStyle';
 const Section = styled.section`
   background-color: white;
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100vh;
   justify-content: center;
@@ -14,6 +15,16 @@ const Section = styled.section`
 `;
 const Number = styled.div`
   width: 150px;
+  border: 1px solid ${COLOR_PALETTE.pastel_green};
+  margin: 20px;
+  padding: 10px; 
+  color: ${COLOR_PALETTE.pastel_green};
+  font-size: 100px;
+  text-align: center;
+  border-radius: 5px;
+`;
+const Timer = styled.div`
+  /* width: 150px; */
   border: 1px solid ${COLOR_PALETTE.pastel_green};
   margin: 20px;
   padding: 10px; 
@@ -79,19 +90,48 @@ const initialResult = {
 const ReduxContext = createContext();
 
 const Board = () => {
+  return (
+    <Section>
+      <DisplayTimer />
+      <DisplayResult />
+    </Section>
+  )
+}
+
+
+const DisplayTimer = () => {
+  return (
+    <section
+      css={css`
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 150px;
+      width: 600px;
+      background-color:${COLOR_PALETTE.background_navy_blue};
+      border-radius: 15px;
+      margin: 15px;
+    `}
+    >
+      <Timer>19:20</Timer>
+    </section>
+  )
+}
+
+const DisplayResult = () => {
   const { state, dispatch } = useContext(ReduxContext);
 
   return (
     <section
       css={css`
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 300px;
-        width: 600px;
-        background-color:${COLOR_PALETTE.background_navy_blue};
-        border-radius: 15px;
-      `}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 600px;
+    background-color:${COLOR_PALETTE.background_navy_blue};
+    border-radius: 15px;
+  `}
     >
       <div css={results}>
         <div css={buttons}>
@@ -111,15 +151,18 @@ const Board = () => {
   )
 }
 
+
+
+
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialResult);
 
   return (
-    <Section>
+    <div>
       <ReduxContext.Provider value={{ state, dispatch }}>
         <Board />
       </ReduxContext.Provider>
-    </Section>
+    </div>
   );
 }
 
